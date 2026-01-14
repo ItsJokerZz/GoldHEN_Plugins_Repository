@@ -18,11 +18,10 @@ TARGET_ELF   := $(BUILD_FOLDER)/elf$(TYPE)/$(OUTPUT_PRX)
 TARGETSTUB   := $(OUTPUT_PRX).so
 
 # Libraries linked into the ELF.
-LIBS := -lc -lkernel -lSceLibcInternal -lGoldHEN_Hook -lSceSysmodule
+LIBS := -lc -lkernel -lSceLibcInternal -lGoldHEN_Hook
 
 EXTRAFLAGS := $(DEBUG_FLAGS) $(LOG_TYPE) -fcolor-diagnostics -Wall
 
-# You likely won't need to touch anything below this point.
 # Root vars
 TOOLCHAIN     := $(OO_PS4_TOOLCHAIN)
 GH_SDK        := $(GOLDHEN_SDK)
