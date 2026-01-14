@@ -12,7 +12,8 @@
  ----------
 */
 
-typedef enum {
+typedef enum
+{
     TOUCH_L1,
     TOUCH_R1,
     TOUCH_L2,
@@ -37,7 +38,8 @@ typedef enum {
     BUTTON_MAPPING_MAX
 } ButtonMapping;
 
-typedef enum ScePadButtonDataOffset {
+typedef enum ScePadButtonDataOffset
+{
     SCE_PAD_BUTTON_L3 = 0x00000002,
     SCE_PAD_BUTTON_R3 = 0x00000004,
     SCE_PAD_BUTTON_OPTIONS = 0x00000008,
@@ -57,54 +59,63 @@ typedef enum ScePadButtonDataOffset {
     SCE_PAD_BUTTON_INTERCEPTED = 0x80000000,
 } ScePadButtonDataOffset;
 
-typedef enum {
+typedef enum
+{
     PAD_VIRATION_INTENSITY_STRONG,
     PAD_VIRATION_INTENSITY_MEDIUM,
     PAD_VIRATION_INTENSITY_WEAK,
     PAD_VIRATION_INTENSITY_OFF
 } VirationIntensity;
 
-typedef struct ScePadAnalogStick {
+typedef struct ScePadAnalogStick
+{
     uint8_t x;
     uint8_t y;
 } ScePadAnalogStick;
 
-typedef struct ScePadAnalogButtons {
+typedef struct ScePadAnalogButtons
+{
     uint8_t l2;
     uint8_t r2;
     uint8_t padding[2];
 } ScePadAnalogButtons;
 
-typedef struct SceFQuaternion {
+typedef struct SceFQuaternion
+{
     float x, y, z, w;
 } SceFQuaternion;
 
-typedef struct SceFVector3 {
+typedef struct SceFVector3
+{
     float x, y, z;
 } SceFVector3;
 
-typedef struct ScePadTouch {
+typedef struct ScePadTouch
+{
     uint16_t x;
     uint16_t y;
     uint8_t id;
     uint8_t reserve[3];
 } ScePadTouch;
 
-typedef struct ScePadTouchData {
+typedef struct ScePadTouchData
+{
     uint8_t touchNum;
     uint8_t reserve[3];
     uint32_t reserve1;
     ScePadTouch touch[2];
 } ScePadTouchData;
 
-typedef struct ScePadExtensionUnitData {
+typedef struct ScePadExtensionUnitData
+{
     uint32_t extensionUnitId;
     uint8_t reserve[1];
     uint8_t dataLength;
     uint8_t data[10];
 } ScePadExtensionUnitData;
 
-typedef struct ScePadData {
+typedef struct ScePadData
+{
     uint32_t buttons;
     ScePadAnalogStick leftStick;
     ScePadAnalogStick rightStick;
@@ -122,20 +133,24 @@ typedef struct ScePadData {
     uint8_t deviceUniqueData[12];
 } ScePadData;
 
-typedef struct ScePadTouchPadInformation {
+typedef struct ScePadTouchPadInformation
+{
     float pixelDensity;
-    struct {
+    struct
+    {
         uint16_t x;
         uint16_t y;
     } resolution;
 } ScePadTouchPadInformation;
 
-typedef struct ScePadStickInformation {
+typedef struct ScePadStickInformation
+{
     uint8_t deadZoneLeft;
     uint8_t deadZoneRight;
 } ScePadStickInformation;
 
-typedef enum {
+typedef enum
+{
     SCE_PAD_DEVICE_CLASS_INVALID = -1,
     SCE_PAD_DEVICE_CLASS_STANDARD = 0,
     SCE_PAD_DEVICE_CLASS_GUITAR = 1,
@@ -149,7 +164,8 @@ typedef enum {
     SCE_PAD_DEVICE_CLASS_GUN = 9,
 } ScePadDeviceClass;
 
-typedef struct ScePadControllerInformation {
+typedef struct ScePadControllerInformation
+{
     ScePadTouchPadInformation touchPadInfo;
     ScePadStickInformation stickInfo;
     uint8_t connectionType;
@@ -159,17 +175,18 @@ typedef struct ScePadControllerInformation {
     uint8_t reserve[8];
 } ScePadControllerInformation;
 
-typedef struct ScePadVibrationParam {
+typedef struct ScePadVibrationParam
+{
     uint8_t largeMotor;
     uint8_t smallMotor;
 } ScePadVibrationParam;
 
-int scePadGetControllerInformation(int32_t handle, ScePadControllerInformation* pInfo);
-int scePadRead(int handle, ScePadData* data, int count);
-int scePadReadState(int handle, ScePadData* data);
-int scePadReadExt(int handle, ScePadData* data, int count);
-int scePadReadStateExt(int handle, ScePadData* data);
-int scePadSetLightBar(int32_t handle, const void* pParam);
-int scePadSetVibration(int32_t handle, const ScePadVibrationParam* pParam);
+int scePadGetControllerInformation(int32_t handle, ScePadControllerInformation *pInfo);
+int scePadRead(int handle, ScePadData *data, int count);
+int scePadReadState(int handle, ScePadData *data);
+int scePadReadExt(int handle, ScePadData *data, int count);
+int scePadReadStateExt(int handle, ScePadData *data);
+int scePadSetLightBar(int32_t handle, const void *pParam);
+int scePadSetVibration(int32_t handle, const ScePadVibrationParam *pParam);
 
 #endif

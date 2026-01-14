@@ -17,19 +17,19 @@ BUILD_ELF=$(BUILD_DIR)/elf_$(TYPE)
 
 all: build hashes
 
-build_sdk:
-	@echo "[+] Rebuilding SDK with Log Type: $(LOG_MSG)"
-	make -C $(GOLDHEN_SDK) $(LOG_TYPE) DEBUGFLAGS=1
-
 $(BUILD_PRX): build_sdk
 	@rm -rf $(BUILD_PRX) $(BUILD_ELF)
 	@mkdir -p $(BUILD_PRX) $(BUILD_ELF)
 	@echo "[+] Building plugins"
 	@for dir in plugin_src/*; do \
+		if [ "$$(basename "$$dir")" = "game_patch" ]; then \
+			echo "[*] Skipping $$dir"; \
+			continue; \
+		fi; \
 		if [ -f "$$dir/Makefile" ]; then \
 			echo "[+] Building dir: $$dir"; \
-			make -C "$$dir" clean || exit 1; \
-			make -C "$$dir" $(DEBUG_FLAG) $(LOG_TYPE) || exit 1; \
+			$(MAKE) -C "$$dir" clean || exit 1; \
+			$(MAKE) -C "$$dir" $(DEBUG_FLAG) $(LOG_TYPE) || exit 1; \
 		fi; \
 	done
 

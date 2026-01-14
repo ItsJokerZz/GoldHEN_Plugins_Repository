@@ -4,19 +4,22 @@
 #include <stdbool.h>
 #endif
 
-typedef struct ini_entry_s {
-    char* key;
-    char* value;
+typedef struct ini_entry_s
+{
+    char *key;
+    char *value;
 } ini_entry_s;
 
-typedef struct ini_section_s {
-    char* name;
-    ini_entry_s* entry;
+typedef struct ini_section_s
+{
+    char *name;
+    ini_entry_s *entry;
     int size;
 } ini_section_s;
 
-typedef struct ini_table_s {
-    ini_section_s* section;
+typedef struct ini_table_s
+{
+    ini_section_s *section;
     int size;
 } ini_table_s;
 
@@ -24,13 +27,13 @@ typedef struct ini_table_s {
  * @brief Creates an empty ini_table_s struct for writing new entries to.
  * @return ini_table_s*
  */
-ini_table_s* ini_table_create();
+ini_table_s *ini_table_create();
 
 /**
  * @brief Free up all the allocated resources in the ini_table_s struct.
  * @param table
  */
-void ini_table_destroy(ini_table_s* table);
+void ini_table_destroy(ini_table_s *table);
 
 /**
  * @brief Creates an ini_table_s struct filled with data from the specified
@@ -39,7 +42,7 @@ void ini_table_destroy(ini_table_s* table);
  * @param file
  * @return ini_table_s*
  */
-bool ini_table_read_from_file(ini_table_s* table, const char* file);
+bool ini_table_read_from_file(ini_table_s *table, const char *file);
 
 /**
  * @brief Writes the specified ini_table_s struct to the specified `file'.
@@ -49,7 +52,7 @@ bool ini_table_read_from_file(ini_table_s* table, const char* file);
  * @param file
  * @return bool
  */
-bool ini_table_write_to_file(ini_table_s* table, const char* file);
+bool ini_table_write_to_file(ini_table_s *table, const char *file);
 
 /**
  * @brief Creates a new entry in the `table' containing the `key' and `value'
@@ -60,8 +63,8 @@ bool ini_table_write_to_file(ini_table_s* table, const char* file);
  * @param key
  * @param value
  */
-void ini_table_create_entry(ini_table_s* table, const char* section_name, const char* key,
-                            const char* value);
+void ini_table_create_entry(ini_table_s *table, const char *section_name, const char *key,
+                            const char *value);
 
 /**
  * @brief Checks for the existance of an entry in the specified `table'.  Returns
@@ -71,7 +74,7 @@ void ini_table_create_entry(ini_table_s* table, const char* section_name, const 
  * @param key
  * @return bool
  */
-bool ini_table_check_entry(ini_table_s* table, const char* section_name, const char* key);
+bool ini_table_check_entry(ini_table_s *table, const char *section_name, const char *key);
 
 /**
  * @brief Retrieves the unmodified value of the specified `key' in `section_name'.
@@ -82,7 +85,7 @@ bool ini_table_check_entry(ini_table_s* table, const char* section_name, const c
  * @param key
  * @return const char*
  */
-const char* ini_table_get_entry(ini_table_s* table, const char* section_name, const char* key);
+const char *ini_table_get_entry(ini_table_s *table, const char *section_name, const char *key);
 
 /**
  * @brief Retrieves the value of the specified `key' in `section_name', converted
@@ -93,8 +96,8 @@ const char* ini_table_get_entry(ini_table_s* table, const char* section_name, co
  * @param [out]value
  * @return int
  */
-bool ini_table_get_entry_as_int(ini_table_s* table, const char* section_name, const char* key,
-                                int* value);
+bool ini_table_get_entry_as_int(ini_table_s *table, const char *section_name, const char *key,
+                                int *value);
 
 /**
  * @brief Retrieves the value of the specified `key' in `section_name', converted
@@ -105,14 +108,14 @@ bool ini_table_get_entry_as_int(ini_table_s* table, const char* section_name, co
  * @param [out]value
  * @return bool
  */
-bool ini_table_get_entry_as_bool(ini_table_s* table, const char* section_name, const char* key,
-                                 bool* value);
+bool ini_table_get_entry_as_bool(ini_table_s *table, const char *section_name, const char *key,
+                                 bool *value);
 
 // Ctn: make this non-static
-ini_section_s* _ini_section_find(ini_table_s* table, const char* name);
+ini_section_s *_ini_section_find(ini_table_s *table, const char *name);
 
-bool ini_table_get_entry_as_scePadButton(ini_table_s* table, const char* section_name,
-                                         const char* key, uint32_t* value);
+bool ini_table_get_entry_as_scePadButton(ini_table_s *table, const char *section_name,
+                                         const char *key, uint32_t *value);
 
-bool ini_table_get_entry_as_viration_intensity(ini_table_s* table, const char* section_name,
-                                               const char* key, int32_t* value);
+bool ini_table_get_entry_as_viration_intensity(ini_table_s *table, const char *section_name,
+                                               const char *key, int32_t *value);

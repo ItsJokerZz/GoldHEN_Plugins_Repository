@@ -32,7 +32,7 @@ jobs:
       - name: Checkout SDK
         uses: actions/checkout@v3
         with:
-          repository: GoldHEN/GoldHEN_Plugins_SDK
+          repository: ItsJokerZz/GoldHEN_Plugins_SDK
           path: SDK
 
       - name: Checkout mxml
@@ -50,7 +50,7 @@ jobs:
           echo "commit_hash=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
 
       - name: Download OpenOrbis Toolchain
-        run: curl -sL https://github.com/illusion0001/OpenOrbis-PS4-Toolchain/releases/latest/download/toolchain.tar.gz | tar xz -C ./
+        run: curl -sL https://github.com/ItsJokerZz/OpenOrbis-PS4-Toolchain/releases/latest/download/toolchain.tar.gz | tar xz -C ./
 
       - name: Install mini xml
         working-directory: mxml/ps4

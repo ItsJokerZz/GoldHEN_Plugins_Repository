@@ -18,7 +18,7 @@ TARGET_ELF   := $(BUILD_FOLDER)/elf$(TYPE)/$(OUTPUT_PRX)
 TARGETSTUB   := $(OUTPUT_PRX).so
 
 # Libraries linked into the ELF.
-LIBS := -lSceLibcInternal -lSceGnmDriver -lScePad -lGoldHEN_Hook -lkernel -lSceSysmodule -lSceSystemService -lSceUserService
+LIBS := -lc -lkernel -lSceLibcInternal -lSceGnmDriver -lScePad -lGoldHEN_Hook -lSceSysmodule -lSceSystemService -lSceUserService
 
 EXTRAFLAGS := $(DEBUG_FLAGS) $(LOG_TYPE) -fcolor-diagnostics -Wall
 
@@ -63,7 +63,7 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 $(TARGET): $(INTDIR) $(OBJS)
-	$(LD) $(GH_SDK)/build/crtprx.o $(INTDIR)/*.o -o $(TARGET_ELF).elf $(LDFLAGS)
+	$(LD) $(TOOLCHAIN)/lib/crtprx.o $(INTDIR)/*.o -o $(TARGET_ELF).elf $(LDFLAGS)
 	$(TOOLCHAIN)/bin/$(CDIR)/create-fself -in=$(TARGET_ELF).elf -out=$(TARGET_ELF).oelf --lib=$(TARGET).prx --paid 0x3800000000000011
 
 $(TARGETSTUB): $(INTDIR) $(STUBOBJS)
@@ -87,13 +87,10 @@ build-info:
 	$(shell echo "#define GIT_NUM $(shell git rev-list HEAD --count)" >> $(COMMON_DIR)/git_ver.h)
 	$(shell echo "#define BUILD_DATE \"$(shell date '+%b %d %Y @ %T')\"" >> $(COMMON_DIR)/git_ver.h)
 
-plugin_common:
-	$(CC) $(CFLAGS) -o $(INTDIR)/plugin_common.o $(COMMON_DIR)/plugin_common.c
-
 .PHONY: clean
 .DEFAULT_GOAL := all
 
-all: build-info plugin_common $(TARGET)
+all: build-info $(TARGET)
 
 clean:
 	rm -rf $(TARGET) $(TARGETSTUB) $(INTDIR) $(OBJS)

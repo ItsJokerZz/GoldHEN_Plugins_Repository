@@ -1,46 +1,53 @@
 #include "utils.h"
 
-s32 Read_File(const char *input_file, char **file_data, u64 *filesize, u32 extra) {
+s32 Read_File(const char *input_file, char **file_data, u64 *filesize, u32 extra)
+{
     s32 res = 0;
     s32 fd = 0;
 
     debug_printf("Reading input_file \"%s\"\n", input_file);
 
     fd = sceKernelOpen(input_file, 0, 0777);
-    if (fd < 0) {
+    if (fd < 0)
+    {
         debug_printf("sceKernelOpen() 0x%08x\n", fd);
         res = fd;
         goto term;
     }
 
     *filesize = sceKernelLseek(fd, 0, SEEK_END);
-    if (*filesize == 0) {
+    if (*filesize == 0)
+    {
         debug_printf("ERROR: input_file is empty %i\n", res);
         res = -1;
         goto term;
     }
 
     res = sceKernelLseek(fd, 0, SEEK_SET);
-    if (res < 0) {
+    if (res < 0)
+    {
         debug_printf("sceKernelLseek() 0x%08x\n", res);
         goto term;
     }
 
     *file_data = (char *)malloc(*filesize + extra);
-    if (*file_data == NULL) {
+    if (*file_data == NULL)
+    {
         debug_printf("ERROR: malloc()\n");
         goto term;
     }
 
     res = sceKernelRead(fd, *file_data, *filesize);
-    if (res < 0) {
+    if (res < 0)
+    {
         debug_printf("sceKernelRead() 0x%08x\n", res);
         goto term;
     }
 
     res = sceKernelClose(fd);
 
-    if (res < 0) {
+    if (res < 0)
+    {
         debug_printf("ERROR: sceKernelClose() 0x%08x\n", res);
         goto term;
     }
@@ -52,18 +59,21 @@ s32 Read_File(const char *input_file, char **file_data, u64 *filesize, u32 extra
 
 term:
 
-    if (fd != 0) {
+    if (fd != 0)
+    {
         sceKernelClose(fd);
     }
 
     return res;
 }
 
-s32 Write_File(const char *input_file, unsigned char *file_data, u64 filesize) {
+s32 Write_File(const char *input_file, unsigned char *file_data, u64 filesize)
+{
     s32 fd = 0;
     s64 size_written = 0;
     fd = sceKernelOpen(input_file, 0x200 | 0x002, 0777);
-    if (fd < 0) {
+    if (fd < 0)
+    {
         debug_printf("Failed to make file \"%s\"\n", input_file);
         return 0;
     }
@@ -75,7 +85,7 @@ s32 Write_File(const char *input_file, unsigned char *file_data, u64 filesize) {
 }
 
 // https://github.com/bucanero/apollo-ps4/blob/a530cae3c81639eedebac606c67322acd6fa8965/source/orbis_jbc.c#L62
-s32 get_module_info(OrbisKernelModuleInfo moduleInfo, const char* name, uint64_t *base, uint32_t *size)
+s32 get_module_info(OrbisKernelModuleInfo moduleInfo, const char *name, uint64_t *base, uint32_t *size)
 {
     OrbisKernelModule handles[256];
     size_t numModules;
@@ -114,13 +124,13 @@ s32 get_module_info(OrbisKernelModuleInfo moduleInfo, const char* name, uint64_t
     return 0;
 }
 
-u32 pattern_to_byte(const char* pattern, uint8_t* bytes)
+u32 pattern_to_byte(const char *pattern, uint8_t *bytes)
 {
     u32 count = 0;
-    const char* start = pattern;
-    const char* end = pattern + strlen(pattern);
+    const char *start = pattern;
+    const char *end = pattern + strlen(pattern);
 
-    for (const char* current = start; current < end; ++current)
+    for (const char *current = start; current < end; ++current)
     {
         if (*current == '?')
         {
@@ -133,7 +143,7 @@ u32 pattern_to_byte(const char* pattern, uint8_t* bytes)
         }
         else
         {
-            bytes[count++] = strtoul(current, (char**)&current, 16);
+            bytes[count++] = strtoul(current, (char **)&current, 16);
         }
     }
     return count;
@@ -148,14 +158,14 @@ u32 pattern_to_byte(const char* pattern, uint8_t* bytes)
  * @credit            https://github.com/OneshotGH/CSGOSimple-master/blob/59c1f2ec655b2fcd20a45881f66bbbc9cd0e562e/CSGOSimple/helpers/utils.cpp#L182
  * @returns           Address of the first occurrence
  */
-u8* PatternScan(uint64_t module_base, uint32_t module_size, const char* signature)
+u8 *PatternScan(uint64_t module_base, uint32_t module_size, const char *signature)
 {
     if (!module_base || !module_size)
     {
         return nullptr;
     }
     constexpr u32 MAX_PATTERN_LENGTH = 256;
-    u8 patternBytes[MAX_PATTERN_LENGTH] = { 0 };
+    u8 patternBytes[MAX_PATTERN_LENGTH] = {0};
     s32 patternLength = pattern_to_byte(signature, patternBytes);
     if (!patternLength || patternLength >= MAX_PATTERN_LENGTH)
     {
@@ -163,7 +173,7 @@ u8* PatternScan(uint64_t module_base, uint32_t module_size, const char* signatur
         final_printf("Input Pattern %s\n", signature);
         return nullptr;
     }
-    u8* scanBytes = (uint8_t*)module_base;
+    u8 *scanBytes = (uint8_t *)module_base;
 
     for (u64 i = 0; i < module_size; ++i)
     {

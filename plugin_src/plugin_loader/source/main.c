@@ -8,7 +8,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-#include "GoldHEN.h"
 
 #include <orbis/libkernel.h>
 
@@ -28,7 +27,7 @@ attr_public u32 g_pluginVersion = 0x00000110; // 1.10
 char g_PluginDetails[256] = {0};
 
 // Todo: Move to sdk.
-bool file_exists(const char* filename)
+bool file_exists(const char *filename)
 {
     struct stat buff;
     return stat(filename, &buff) == 0 ? true : false;
@@ -37,27 +36,27 @@ bool file_exists(const char* filename)
 void create_template_config(void)
 {
     final_printf("Creating new %s file\n", PLUGIN_CONFIG_PATH);
-    // compile time
-    #define DEFAULT_INI_DATA "" \
-                            "[" PLUGIN_SETTINGS_SECTION "]\n" \
-                            "; Global settings for plugin loader.\n" \
-                            "; Affects every app/process boot.\n" \
-                            "show_load_notification=true\n" \
-                            "; Details for show_load_notification\n" \
-                            "; Shows how many plugins were successfully loaded.\n" \
-                            "; Valid options: false or true.\n" \
-                            "\n" \
-                            "; Load plugins in default section regardless of Title ID\n" \
-                            "[default]\n" \
-                            ";/data/GoldHEN/plugins/example.prx\n" \
-                            ";/data/GoldHEN/plugins/example2.prx\n" \
-                            "\n" \
-                            "; Note: text following the ; are comments\n"
+// compile time
+#define DEFAULT_INI_DATA ""                                                           \
+                         "[" PLUGIN_SETTINGS_SECTION "]\n"                            \
+                         "; Global settings for plugin loader.\n"                     \
+                         "; Affects every app/process boot.\n"                        \
+                         "show_load_notification=true\n"                              \
+                         "; Details for show_load_notification\n"                     \
+                         "; Shows how many plugins were successfully loaded.\n"       \
+                         "; Valid options: false or true.\n"                          \
+                         "\n"                                                         \
+                         "; Load plugins in default section regardless of Title ID\n" \
+                         "[default]\n"                                                \
+                         ";/data/GoldHEN/plugins/example.prx\n"                       \
+                         ";/data/GoldHEN/plugins/example2.prx\n"                      \
+                         "\n"                                                         \
+                         "; Note: text following the ; are comments\n"
 
     // Does not work, may not have write access.
-    //FILE* f = fopen(PLUGIN_CONFIG_PATH, "w");
-    //fprintf(f, "%s", file_str);
-    //fclose(f);
+    // FILE* f = fopen(PLUGIN_CONFIG_PATH, "w");
+    // fprintf(f, "%s", file_str);
+    // fclose(f);
 
     // Works
     // Todo: Move to sdk.
@@ -72,7 +71,7 @@ void create_template_config(void)
     sceKernelClose(f);
 }
 
-bool simple_get_bool(const char* val)
+bool simple_get_bool(const char *val)
 {
     if (val == NULL || val[0] == 0)
     {
@@ -91,7 +90,7 @@ bool simple_get_bool(const char* val)
     return true;
 }
 
-size_t strncat_s(char* dest, size_t destSize, const char* source, size_t source_count)
+size_t strncat_s(char *dest, size_t destSize, const char *source, size_t source_count)
 {
     if (dest == NULL || destSize == 0 || source == NULL || source_count == 0)
     {
@@ -155,23 +154,25 @@ void load_plugins(ini_section_s *section, uint32_t *load_count)
         if (result == 0x80020002)
         {
             final_printf("Plugin %s not found\n", entry->key);
-        } else if (result < 0)
+        }
+        else if (result < 0)
         {
             final_printf("Error loading Plugin %s! Error code 0x%08x (%i)\n", entry->key, result, result);
-        } else
+        }
+        else
         {
             int32_t ret = 0;
             bool load_success = false;
-            const char** ModuleName = NULL;
+            const char **ModuleName = NULL;
             // TODO: accept user provided arguments
-            int32_t(*plugin_load_ret)(void) = NULL;
-            int32_t(*plugin_unload_ret)(void) = NULL;
-            ret = sceKernelDlsym(result, "g_pluginName", (void**)&ModuleName);
+            int32_t (*plugin_load_ret)(void) = NULL;
+            int32_t (*plugin_unload_ret)(void) = NULL;
+            ret = sceKernelDlsym(result, "g_pluginName", (void **)&ModuleName);
             final_printf("Loaded Plugin %s\n", entry->key);
             final_printf("Plugin Handle 0x%08x Dlsym 0x%08x\n", result, ret);
-            ret = sceKernelDlsym(result, "plugin_load", (void**)&plugin_load_ret);
+            ret = sceKernelDlsym(result, "plugin_load", (void **)&plugin_load_ret);
             final_printf("plugin_load Dlsym 0x%08x @ 0x%p\n", ret, plugin_load_ret);
-            ret = sceKernelDlsym(result, "plugin_unload", (void**)&plugin_unload_ret);
+            ret = sceKernelDlsym(result, "plugin_unload", (void **)&plugin_unload_ret);
             final_printf("plugin_unload Dlsym 0x%08x @ 0x%p\n", ret, plugin_unload_ret);
             if (plugin_load_ret && plugin_unload_ret)
             {
@@ -226,6 +227,16 @@ void load_plugins(ini_section_s *section, uint32_t *load_count)
     }
 }
 
+int32_t attr_public plugin_load(int32_t argc, const char *argv[])
+{
+    return -1;
+}
+
+int32_t attr_public plugin_unload(int32_t argc, const char *argv[])
+{
+    return -1;
+}
+
 int32_t attr_module_hidden module_start(size_t argc, const void *args)
 {
     final_printf("[GoldHEN] <%s\\Ver.0x%08x> %s\n", g_pluginName, g_pluginVersion, __func__);
@@ -240,7 +251,8 @@ int32_t attr_module_hidden module_start(size_t argc, const void *args)
     if (sys_sdk_proc_info(&procInfo) == 0)
     {
         print_proc_info();
-    } else
+    }
+    else
     {
         final_printf("Plugin Manager failed to initialise\n");
         return -1;
@@ -248,15 +260,13 @@ int32_t attr_module_hidden module_start(size_t argc, const void *args)
 
     final_printf("Plugin Manager started successfully\n");
 
-
     // Better done in GoldHEN
     if (!file_exists(PLUGIN_CONFIG_PATH))
     {
-       final_printf("Plugin config %s not found\n", PLUGIN_CONFIG_PATH);
-       create_template_config();
-       return -1;
+        final_printf("Plugin config %s not found\n", PLUGIN_CONFIG_PATH);
+        create_template_config();
+        return -1;
     }
-
 
     ini_table_s *config = ini_table_create();
     if (config == NULL)

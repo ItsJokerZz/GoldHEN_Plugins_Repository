@@ -3,7 +3,6 @@
 // Author: illusion0001 @ https://github.com/illusion0001
 // Repository: https://github.com/GoldHEN/GoldHEN_Plugins_Repository
 
-#include <Common.h>
 #include <orbis/VideoOut.h>
 #include "plugin_common.h"
 
@@ -28,8 +27,8 @@ void print_resStat(OrbisVideoOutResolutionStatus *status)
 s32 sceVideoOutGetResolutionStatus_hook(int handle, OrbisVideoOutResolutionStatus *status)
 {
     s32 ret = HOOK_CONTINUE(sceVideoOutGetResolutionStatus,
-                           s32 (*)(s32, OrbisVideoOutResolutionStatus*),
-                           handle, status);
+                            s32 (*)(s32, OrbisVideoOutResolutionStatus *),
+                            handle, status);
 #if (__FINAL__) == 0
     final_printf("old OrbisVideoOutResolutionStatus *status\n");
     print_resStat(status);
@@ -45,7 +44,8 @@ s32 sceVideoOutGetResolutionStatus_hook(int handle, OrbisVideoOutResolutionStatu
     return ret;
 }
 
-s32 attr_public plugin_load(s32 argc, const char* argv[]) {
+s32 attr_public plugin_load(s32 argc, const char *argv[])
+{
     final_printf("[GoldHEN] <%s\\Ver.0x%08x> %s\n", g_pluginName, g_pluginVersion, __func__);
     final_printf("[GoldHEN] Plugin Author(s): %s\n", g_pluginAuth);
     boot_ver();
@@ -53,7 +53,8 @@ s32 attr_public plugin_load(s32 argc, const char* argv[]) {
     return 0;
 }
 
-s32 attr_public plugin_unload(s32 argc, const char* argv[]) {
+s32 attr_public plugin_unload(s32 argc, const char *argv[])
+{
     final_printf("[GoldHEN] <%s\\Ver.0x%08x> %s\n", g_pluginName, g_pluginVersion, __func__);
     UNHOOK(sceVideoOutGetResolutionStatus);
     return 0;
@@ -61,10 +62,10 @@ s32 attr_public plugin_unload(s32 argc, const char* argv[]) {
 
 s32 attr_module_hidden module_start(s64 argc, const void *args)
 {
-    return 0;
+    return -1;
 }
 
 s32 attr_module_hidden module_stop(s64 argc, const void *args)
 {
-    return 0;
+    return -1;
 }

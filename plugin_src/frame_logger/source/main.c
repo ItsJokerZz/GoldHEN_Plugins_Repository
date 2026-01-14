@@ -2,7 +2,6 @@
 // Author: illusion0001 @ https://github.com/illusion0001
 // Repository: https://github.com/GoldHEN/GoldHEN_Plugins_Repository
 
-#include <Common.h>
 #include <stdbool.h>
 #include <orbis/Pad.h>
 #include <time.h>
@@ -53,7 +52,7 @@ int32_t sceGnmSubmitAndFlipCommandBuffers_hook(uint32_t count, void *dcbGpuAddrs
     }
     doStats();
     return HOOK_CONTINUE(sceGnmSubmitAndFlipCommandBuffers,
-                         int32_t(*)(uint32_t, void **, uint32_t *, void **, uint32_t *, uint32_t, uint32_t, uint32_t, int64_t),
+                         int32_t (*)(uint32_t, void **, uint32_t *, void **, uint32_t *, uint32_t, uint32_t, uint32_t, int64_t),
                          count, dcbGpuAddrs, dcbSizesInBytes, ccbGpuAddrs, ccbSizesInBytes, videoOutHandle, displayBufferIndex, flipMode, flipArg);
 }
 
@@ -194,9 +193,9 @@ void *frame_logger_input_thread(void *args)
         }
         else
         {
-            final_printf(STRINGIFY(PadHandle)": 0x%08x\n", PadHandle);
-            final_printf(STRINGIFY(ret)": 0x%08x\n", ret);
-            final_printf(STRINGIFY(pData.connected)": 0x%02x (%s)\n", pData.connected, pData.connected ? "true" : "false");
+            final_printf(STRINGIFY(PadHandle) ": 0x%08x\n", PadHandle);
+            final_printf(STRINGIFY(ret) ": 0x%08x\n", ret);
+            final_printf(STRINGIFY(pData.connected) ": 0x%02x (%s)\n", pData.connected, pData.connected ? "true" : "false");
         }
         // periodically flush the stream every second to avoid data loss
         if (g_LogFILE)
@@ -240,10 +239,10 @@ s32 attr_public plugin_unload(s32 argc, const char *argv[])
 
 s32 attr_module_hidden module_start(s64 argc, const void *args)
 {
-    return 0;
+    return -1;
 }
 
 s32 attr_module_hidden module_stop(s64 argc, const void *args)
 {
-    return 0;
+    return -1;
 }

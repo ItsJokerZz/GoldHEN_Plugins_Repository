@@ -1,4 +1,3 @@
-#include <Common.h>
 #include "plugin_common.h"
 #include <stdbool.h>
 
@@ -11,4 +10,4 @@ constexpr inline u64 djb2_hash(const char *str);
 
 u64 patch_hash_calc(const char *title, const char *name, const char *app_ver,
                     const char *title_id, const char *elf);
-void patch_data1(const char* patch_type_str, u64 addr, const char *value, uint32_t source_size, uint64_t jump_target);
+void patch_data1(const char *patch_type_str, u64 addr, const char *value, uint32_t source_size, uint64_t jump_target);

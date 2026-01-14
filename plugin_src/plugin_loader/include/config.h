@@ -4,18 +4,21 @@
 #include <stdbool.h>
 #endif
 
-typedef struct ini_entry_s {
+typedef struct ini_entry_s
+{
     char *key;
     char *value;
 } ini_entry_s;
 
-typedef struct ini_section_s {
+typedef struct ini_section_s
+{
     char *name;
     ini_entry_s *entry;
     int size;
 } ini_section_s;
 
-typedef struct ini_table_s {
+typedef struct ini_table_s
+{
     ini_section_s *section;
     int size;
 } ini_table_s;

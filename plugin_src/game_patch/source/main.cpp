@@ -6,13 +6,13 @@
 #include "patch.h"
 #include "utils.h"
 
-#define GOLDHEN_PATH_ (const char*) GOLDHEN_PATH
-#define BASE_PATH_PATCH (const char*) GOLDHEN_PATH_ "/patches"
-#define BASE_PATH_PATCH_SETTINGS (const char*) BASE_PATH_PATCH "/settings"
-#define BASE_PATH_PATCH_XML (const char*) BASE_PATH_PATCH "/xml"
-#define PLUGIN_NAME (const char*) "game_patch"
-#define PLUGIN_DESC (const char*) "Patches game at boot"
-#define PLUGIN_AUTH (const char*) "illusion"
+#define GOLDHEN_PATH_ (const char *)GOLDHEN_PATH
+#define BASE_PATH_PATCH (const char *)GOLDHEN_PATH_ "/patches"
+#define BASE_PATH_PATCH_SETTINGS (const char *)BASE_PATH_PATCH "/settings"
+#define BASE_PATH_PATCH_XML (const char *)BASE_PATH_PATCH "/xml"
+#define PLUGIN_NAME (const char *)"game_patch"
+#define PLUGIN_DESC (const char *)"Patches game at boot"
+#define PLUGIN_AUTH (const char *)"illusion"
 #define PLUGIN_VER 0x110 // 1.10
 
 #define NO_ASLR_ADDR 0x00400000
@@ -34,10 +34,11 @@ bool g_PRX = false;
 u64 g_PRX_module_base = 0;
 u32 g_PRX_module_size = 0;
 
-const char* GetXMLAttr(mxml_node_t *node, const char *name)
+const char *GetXMLAttr(mxml_node_t *node, const char *name)
 {
-    const char* AttrData = mxmlElementGetAttr(node, name);
-    if (AttrData == NULL) AttrData = "\0";
+    const char *AttrData = mxmlElementGetAttr(node, name);
+    if (AttrData == NULL)
+        AttrData = "\0";
     return AttrData;
 }
 
@@ -73,7 +74,7 @@ void get_key_init(void)
         for (node = mxmlFindElement(tree, tree, "Metadata", NULL, NULL, MXML_DESCEND); node != NULL;
              node = mxmlFindElement(node, tree, "Metadata", NULL, NULL, MXML_DESCEND))
         {
-            char* settings_buffer = nullptr;
+            char *settings_buffer = nullptr;
             u64 settings_size = 0;
             bool PRX_patch = false;
             const char *TitleData = GetXMLAttr(node, "Title");
@@ -125,7 +126,7 @@ void get_key_init(void)
                 patch_items++;
                 mxml_node_t *Patchlist_node = mxmlFindElement(node, node, "PatchList", NULL, NULL, MXML_DESCEND);
                 for (mxml_node_t *Line_node = mxmlFindElement(node, node, "Line", NULL, NULL, MXML_DESCEND); Line_node != NULL;
-                                  Line_node = mxmlFindElement(Line_node, Patchlist_node, "Line", NULL, NULL, MXML_DESCEND))
+                     Line_node = mxmlFindElement(Line_node, Patchlist_node, "Line", NULL, NULL, MXML_DESCEND))
                 {
                     u64 addr_real = 0;
                     u64 jump_addr = 0;
@@ -144,8 +145,8 @@ void get_key_init(void)
                     {
                         if (startsWith(gameType, "mask_jump32"))
                         {
-                            const char* gameJumpTarget = GetXMLAttr(Line_node, "Target");
-                            const char* gameJumpSize = GetXMLAttr(Line_node, "Size");
+                            const char *gameJumpTarget = GetXMLAttr(Line_node, "Target");
+                            const char *gameJumpSize = GetXMLAttr(Line_node, "Size");
                             jump_addr = addr_real = (uint64_t)PatternScan(g_module_base, g_module_size, gameJumpTarget);
                             jump_size = strtoul(gameJumpSize, NULL, 10);
                             debug_printf("Target: 0x%lx jump size %u\n", jump_addr, jump_size);
@@ -223,8 +224,8 @@ void get_key_init(void)
             char msg[128] = {0};
             snprintf(msg, sizeof(msg), "%u %s Applied\n"
                                        "%u %s Applied",
-                                       patch_items, (patch_items == 1) ? "Patch" : "Patches",
-                                       patch_lines, (patch_lines == 1) ? "Patch Line" : "Patch Lines");
+                     patch_items, (patch_items == 1) ? "Patch" : "Patches",
+                     patch_lines, (patch_lines == 1) ? "Patch Line" : "Patch Lines");
             NotifyStatic(TEX_ICON_SYSTEM, msg);
         }
     }
@@ -250,15 +251,15 @@ void make_folders(void)
     mkdir_chmod(BASE_PATH_PATCH_SETTINGS, 0777);
 }
 
-extern "C" {
-s32 attr_public plugin_load(s32 argc, const char* argv[]) {
+s32 attr_public plugin_load(s32 argc, const char *argv[])
+{
     final_printf("[GoldHEN] <%s\\Ver.0x%08x> %s\n", g_pluginName, g_pluginVersion, __func__);
     final_printf("[GoldHEN] Plugin Author(s): %s\n", g_pluginAuth);
     boot_ver();
     proc_info procInfo{};
     OrbisKernelModuleInfo CurrentModuleInfo{};
     CurrentModuleInfo.size = sizeof(OrbisKernelModuleInfo);
-    if(!get_module_info(CurrentModuleInfo, "0", &g_module_base, &g_module_size) && (!g_module_base || !g_module_size))
+    if (!get_module_info(CurrentModuleInfo, "0", &g_module_base, &g_module_size) && (!g_module_base || !g_module_size))
     {
         NotifyStatic(TEX_ICON_SYSTEM, "Could not find module info for current process");
         return -1;
@@ -278,7 +279,8 @@ s32 attr_public plugin_load(s32 argc, const char* argv[]) {
     return -1;
 }
 
-s32 attr_public plugin_unload(s32 argc, const char* argv[]) {
+s32 attr_public plugin_unload(s32 argc, const char *argv[])
+{
     final_printf("[GoldHEN] <%s\\Ver.0x%08x> %s\n", g_pluginName, g_pluginVersion, __func__);
     return 0;
 }
@@ -291,5 +293,4 @@ s32 attr_module_hidden module_start(s64 argc, const void *args)
 s32 attr_module_hidden module_stop(s64 argc, const void *args)
 {
     return 0;
-}
 }

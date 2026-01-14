@@ -2,7 +2,6 @@
 // Author: SiSTR0 @ https://github.com/SiSTR0
 // Repository: https://github.com/GoldHEN/GoldHEN_Plugins_Repository
 
-#include "Common.h"
 #include "plugin_common.h"
 
 attr_public const char *g_pluginName = "afr";
@@ -16,9 +15,9 @@ HOOK_INIT(fopen);
 
 char titleid[16];
 
-FILE* fopen_hook(const char *path, const char *mode)
+FILE *fopen_hook(const char *path, const char *mode)
 {
-    FILE* fp = NULL;
+    FILE *fp = NULL;
     if (path[0] == '/' && path[1] == 'a' && path[2] == 'p' && path[3] == 'p' &&
         path[4] == '0' && strlen(path) > 6)
     {
@@ -27,7 +26,7 @@ FILE* fopen_hook(const char *path, const char *mode)
         snprintf(possible_path, sizeof(possible_path), GOLDHEN_PATH "/AFR/%s/%s", titleid, path + 6);
 
         fp = HOOK_CONTINUE(fopen,
-                           FILE *(*)(const char *, const char *),
+                           FILE * (*)(const char *, const char *),
                            possible_path, mode);
         if (fp)
         {
@@ -37,20 +36,20 @@ FILE* fopen_hook(const char *path, const char *mode)
     }
 
     fp = HOOK_CONTINUE(fopen,
-                       FILE *(*)(const char *, const char *),
+                       FILE * (*)(const char *, const char *),
                        path, mode);
     debug_printf("path: %s FILE*: 0x%p\n", path, &fp);
     return fp;
 }
 
-s32 sceKernelStat_hook(char *path, struct stat* stat_buf)
+s32 sceKernelStat_hook(char *path, struct stat *stat_buf)
 {
     // FIXME: use errno for correct `stat()` return values
     s32 ret = 0;
     s32 ret_pos = 0;
     ret = stat(path, stat_buf);
     if (path[0] == '/' && path[1] == 'a' && path[2] == 'p' && path[3] == 'p' &&
-        path[4] == '0' && strlen(path) > 6 )
+        path[4] == '0' && strlen(path) > 6)
     {
         char possible_path[MAX_PATH_];
         memset(possible_path, 0, sizeof(possible_path));
@@ -77,7 +76,8 @@ s32 sceKernelOpen_hook(const char *path, s32 flags, OrbisKernelMode mode)
 {
     s32 fd = 0;
     if (path[0] == '/' && path[1] == 'a' && path[2] == 'p' && path[3] == 'p' &&
-        path[4] == '0' && strlen(path) > 6) {
+        path[4] == '0' && strlen(path) > 6)
+    {
 
         char possible_path[MAX_PATH_];
         memset(possible_path, 0, sizeof(possible_path));
@@ -102,13 +102,14 @@ s32 sceKernelOpen_hook(const char *path, s32 flags, OrbisKernelMode mode)
     return fd;
 }
 
-s32 attr_public plugin_load(s32 argc, const char* argv[])
+s32 attr_public plugin_load(s32 argc, const char *argv[])
 {
     final_printf("[GoldHEN] <%s\\Ver.0x%08x> %s\n", g_pluginName, g_pluginVersion, __func__);
     final_printf("[GoldHEN] Plugin Author(s): %s\n", g_pluginAuth);
     boot_ver();
     struct proc_info procInfo;
-    if (!sys_sdk_proc_info(&procInfo)) {
+    if (!sys_sdk_proc_info(&procInfo))
+    {
         memcpy(titleid, procInfo.titleid, sizeof(titleid));
         print_proc_info();
     }
@@ -118,7 +119,7 @@ s32 attr_public plugin_load(s32 argc, const char* argv[])
     return 0;
 }
 
-s32 attr_public plugin_unload(s32 argc, const char* argv[])
+s32 attr_public plugin_unload(s32 argc, const char *argv[])
 {
     final_printf("[GoldHEN] <%s\\Ver.0x%08x> %s\n", g_pluginName, g_pluginVersion, __func__);
     UNHOOK(sceKernelOpen);
@@ -129,10 +130,10 @@ s32 attr_public plugin_unload(s32 argc, const char* argv[])
 
 s32 attr_module_hidden module_start(s64 argc, const void *args)
 {
-    return 0;
+    return -1;
 }
 
 s32 attr_module_hidden module_stop(s64 argc, const void *args)
 {
-    return 0;
+    return -1;
 }
