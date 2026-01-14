@@ -50,7 +50,39 @@ jobs:
           echo "commit_hash=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
 
       - name: Download OpenOrbis Toolchain
-        run: curl -sL https://github.com/ItsJokerZz/OpenOrbis-PS4-Toolchain/releases/latest/download/toolchain.tar.gz | tar xz -C ./
+        run: |
+          if [ ! -d "$OO_PS4_TOOLCHAIN" ]; then
+          echo "Downloading Latest OpenOrbis Toolchain..."
+          GITHUB_OWNER="OpenOrbis"
+          GITHUB_REPO="OpenOrbis-PS4-Toolchain"
+          WORKFLOW_FILE="toolchain.yml"
+          ARTIFACT_NAME="toolchain-llvm-12"
+          GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+
+          LATEST_RUN_URL="https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/actions/workflows/$WORKFLOW_FILE/runs?per_page=10&status=completed"
+          LATEST_RUN_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$LATEST_RUN_URL" | jq -r '.workflow_runs[] | select(.head_repository.owner.login == "OpenOrbis") | .id' | head -1)
+
+          if [ -z "$LATEST_RUN_ID" ]; then
+            echo "No workflow runs found for $WORKFLOW_FILE."
+            exit 1
+          fi
+
+          ARTIFACTS_URL="https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/actions/runs/$LATEST_RUN_ID/artifacts"
+          ARTIFACT_DOWNLOAD_URL=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$ARTIFACTS_URL" | jq -r --arg ARTIFACT_NAME "$ARTIFACT_NAME" '.artifacts[] | select(.name == $ARTIFACT_NAME) | .archive_download_url')
+
+          if [ -z "$ARTIFACT_DOWNLOAD_URL" ]; then
+            echo "No artifact named '$ARTIFACT_NAME' found in the latest workflow run."
+            exit 1
+          fi
+
+          curl -L -o "$ARTIFACT_NAME.zip" -H "Authorization: token $GITHUB_TOKEN" "$ARTIFACT_DOWNLOAD_URL"
+          unzip -o "$ARTIFACT_NAME.zip"
+          TAR_FILE="$ARTIFACT_NAME.tar.gz"
+          [ -f "$TAR_FILE" ] && tar -xzf "$TAR_FILE"
+          rm -f "$ARTIFACT_NAME.zip" "$TAR_FILE"
+          else
+            echo "OpenOrbis Toolchain found in cache, skipping download."
+          fi
 
       - name: Install mini xml
         working-directory: mxml/ps4
